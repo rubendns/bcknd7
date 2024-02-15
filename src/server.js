@@ -18,9 +18,12 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import githubLoginViewRouter from "./routes/github-login.views.router.js";
+import config from './config/config.js';
+import cors from 'cors';
 
 const app = express();
-const PORT = 8080;
+
+const PORT = config.port;
 const httpServer = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
@@ -84,6 +87,21 @@ app.use("/api/carts", CartsRouter);
 app.get("/failure", (req, res) => {
   res.status(404).send("Error: Page not found");
 });
+
+const corsOptions = {
+  // Permitir solo solicitudes desde un cliente específico
+  origin: 'http://127.0.0.1:5502',
+
+  // Configura los métodos HTTP permitidos
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+
+  // Configura las cabeceras permitidas
+  allowedHeaders: 'Content-Type,Authorization',
+
+  // Configura si se permiten cookies en las solicitudes
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 io.on("connection", (socket) => {
   console.log("New client connected: " + socket.id);
