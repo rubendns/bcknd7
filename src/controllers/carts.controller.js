@@ -1,14 +1,14 @@
-import CartService from "../../services/cartService.js";
+import cartDao from "../dao/mdbManagers/carts.dao.js.js";
 
 class CartController {
     constructor() {
-        this.cartService = new CartService();
+        this.cartDao = new cartDao();
     }
     
     async getCartByUser(req, res) {
         try {
             const userId = req.params.cid;
-            const cart = await CartService.getCartByUser(userId);
+            const cart = await cartDao.getCartByUser(userId);
 
             if (!cart || cart === '') return res.json({ message: "Cart not found" });
 
@@ -27,7 +27,7 @@ class CartController {
             const userId = req.params.cid;
             const productId = req.params.pid;
             const quantity = req.body.quantity;
-            const response = await CartService.addToCart(userId, productId, quantity);
+            const response = await cartDao.addToCart(userId, productId, quantity);
             if (response.modifiedCount === 0) {
                 return res.json({ error: "Cart not updated" });
             }
@@ -46,7 +46,7 @@ class CartController {
         try {
             const { cid, pid } = req.params;
             const newQuantity = req.body.quantity;
-            await CartService.updateProductQuantity(cid, pid, newQuantity);
+            await cartDao.updateProductQuantity(cid, pid, newQuantity);
             res.json({ status: "success", message: "Product quantity updated in the cart" });
         } catch (error) {
             console.log(error);
@@ -58,7 +58,7 @@ class CartController {
         try {
             const { cid } = req.params;
             const newProducts = req.body.products;
-            await CartService.updateCart(cid, newProducts);
+            await cartDao.updateCart(cid, newProducts);
             res.json({ status: "success", message: "Cart updated successfully" });
         } catch (error) {
             console.log(error);
@@ -69,7 +69,7 @@ class CartController {
     async removeFromCart(req, res) {
         try {
             const { cid, pid } = req.params;
-            await CartService.removeFromCart(cid, pid);
+            await cartDao.removeFromCart(cid, pid);
             res.json({ status: "success", message: "Product removed from the cart" });
         } catch (error) {
             console.log(error);
@@ -80,7 +80,7 @@ class CartController {
     async clearCart(req, res) {
         try {
             const cartId = req.params.cid;
-            const response = await CartService.clearCart(cartId);
+            const response = await cartDao.clearCart(cartId);
             if (!response) {
                 return res.json({ error: "Cart not found" });
             }

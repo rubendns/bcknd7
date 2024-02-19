@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 import { Command } from 'commander';
 
-const program = new Command(); //Crea la instancia de comandos de commander.
+const program = new Command();
 
 program
     .option('-d', 'Variable para debug', false)
-    .option('-p <port>', 'Puerto del servidor', 8080)
+    .option('-p <port>', 'Puerto del servidor', 3000)
     .option('--mode <mode>', 'Modo de trabajo', 'dev')
 program.parse();
 
@@ -17,7 +17,6 @@ const environment = program.opts().mode;
 dotenv.config({
     path: environment === "prod" ? "./src/config/.env.production" : "./src/config/.env.development"
 });
-
 
 export default {
     port: process.env.PORT,
