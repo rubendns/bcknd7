@@ -1,4 +1,4 @@
-import userModel from "../dao/models/user.model.js";
+import userModel from "../services/models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PRIVATE_KEY } from "../utils.js";
@@ -10,7 +10,7 @@ class UserService {
         const newUser = await userModel.create({
             email: userData.email,
             password: hashedPassword,
-            // Otros campos de usuario...
+
         });
         return newUser;
         } catch (error) {
