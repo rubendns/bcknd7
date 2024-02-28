@@ -1,98 +1,125 @@
-import cartDao from "../dao/mdbManagers/carts.dao.js.js";
+import cartsService from "../services/carts.services.js";
 
-class CartController {
-    constructor() {
-        this.cartDao = new cartDao();
+async function getAllCarts(req, res) {
+    try {
+        let carts = await cartsService.getAllCarts();
+        res.json({
+        status: "success",
+        carts,
+        });
+    } catch (error) {
+        res.json({
+        status: "Error",
+        error,
+        });
     }
-    
-    async getCartByUser(req, res) {
-        try {
-            const userId = req.params.cid;
-            const cart = await cartDao.getCartByUser(userId);
-
-            if (!cart || cart === '') return res.json({ message: "Cart not found" });
-
-            res.json({ cart });
-        } catch (error) {
-            console.log(error);
-            res.json({
-                message: "Error",
-                error
-            });
-        }
     }
 
-    async addToCart(req, res) {
-        try {
-            const userId = req.params.cid;
-            const productId = req.params.pid;
-            const quantity = req.body.quantity;
-            const response = await cartDao.addToCart(userId, productId, quantity);
-            if (response.modifiedCount === 0) {
-                return res.json({ error: "Cart not updated" });
-            }
-    
-            res.json({ response });
-        } catch (error) {
-            console.log(error);
-            res.json({
-                message: "Error",
-                error
-            });
-        }
+    async function getCartById(req, res) {
+    try {
+        let cid = req.params.cid;
+        let cart = await cartsService.getCartById(cid);
+        res.json({
+        status: "success",
+        cart,
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
     }
 
-    async updateProductQuantity(req, res) {
-        try {
-            const { cid, pid } = req.params;
-            const newQuantity = req.body.quantity;
-            await cartDao.updateProductQuantity(cid, pid, newQuantity);
-            res.json({ status: "success", message: "Product quantity updated in the cart" });
-        } catch (error) {
-            console.log(error);
-            res.json({ status: "error", message: "Error updating product quantity in the cart", error });
-        }
+    async function createCart(req, res) {
+    try {
+        let cart = await cartsService.createCart();
+        res.json({
+        status: "success",
+        cart,
+        });
+    } catch (error) {
+        res.json({
+        status: "Error",
+        error,
+        });
+    }
     }
 
-    async updateCart(req, res) {
-        try {
-            const { cid } = req.params;
-            const newProducts = req.body.products;
-            await cartDao.updateCart(cid, newProducts);
-            res.json({ status: "success", message: "Cart updated successfully" });
-        } catch (error) {
-            console.log(error);
-            res.json({ status: "error", message: "Error updating cart", error });
-        }
+    async function addProductToCart(req, res) {
+    try {
+        let cid = req.params.cid;
+        let pid = req.params.pid;
+        let response = await cartsService.addProductToCart(cid, pid);
+        res.json({
+        status: "success",
+        response,
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
     }
 
-    async removeFromCart(req, res) {
-        try {
-            const { cid, pid } = req.params;
-            await cartDao.removeFromCart(cid, pid);
-            res.json({ status: "success", message: "Product removed from the cart" });
-        } catch (error) {
-            console.log(error);
-            res.json({ status: "error", message: "Error removing product from the cart", error });
-        }
+    async function deleteProductFromCart(req, res) {
+    try {
+        let cid = req.params.cid;
+        let pid = req.params.pid;
+        let response = await cartsService.deleteProductFromCart(cid, pid);
+        res.json({
+        status: "success",
+        response,
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
     }
 
-    async clearCart(req, res) {
-        try {
-            const cartId = req.params.cid;
-            const response = await cartDao.clearCart(cartId);
-            if (!response) {
-                return res.json({ error: "Cart not found" });
-            }
-            res.json({ response });
-        } catch (error) {
-            console.log(error);
-            res.json({
-                message: "Error",
-                error
-            });
-        }
+    async function updateCart(req, res) {
+    try {
+        let cid = req.params.cid;
+        let products = req.body;
+        let response = await cartsService.updateCart(cid, products);
+        res.json({
+        status: "success",
+        response,
+        });
+    } catch (error) {
+        res.send(error.message);
     }
-}
+    }
 
-export default new CartController();
+    async function updateProductQuantity(req, res) {
+    try {
+        let cid = req.params.cid;
+        let pid = req.params.pid;
+        let quantity = req.body.quantity;
+        let response = await cartsService.updateProductQuantity(cid, pid, quantity);
+        res.json({
+        status: "success",
+        response,
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+    }
+
+    async function deleteCart(req, res) {
+    try {
+        let cid = req.params.cid;
+        await cartsService.deleteCart(cid);
+        res.json({
+        status: "success",
+        message: "Cart deleted",
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+    }
+
+    export {
+    getAllCarts,
+    getCartById,
+    createCart,
+    addProductToCart,
+    deleteProductFromCart,
+    updateCart,
+    updateProductQuantity,
+    deleteCart,
+};

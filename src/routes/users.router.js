@@ -1,21 +1,10 @@
-import { Router } from "express";
-import userModel from '../dao/models/user.model.js';
-import {authToken} from '../utils.js';
+import { Router } from 'express';
+import userController from '../controllers/users.controller.js';
 
 const router = Router();
 
-router.get("/:userId", authToken,
-async (req, res) =>{
-    const userId = req.params.userId;
-    try {
-        const user = await userModel.findById(userId);
-        if (!user) {
-            res.status(202).json({message: "User not found with ID: " + userId});
-        }
-        res.json(user);
-    } catch (error) {
-        console.error("Error querying user with ID: " + userId);
-    }
-});
+router.get('/:userId', userController.getUserById);
+router.post('/register', userController.registerUser);
+router.post('/login', userController.authenticateUser);
 
 export default router;

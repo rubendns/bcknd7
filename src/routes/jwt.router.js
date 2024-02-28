@@ -1,5 +1,5 @@
 import { Router } from "express";
-import userModel from "../dao/models/user.model.js";
+import userModel from "../services/models/user.model.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import { isValidPassword } from "../utils.js";

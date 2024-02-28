@@ -2,7 +2,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import GitHubStrategy from "passport-github2";
 import jwtStrategy from "passport-jwt";
-import userModel from "../dao/models/user.model.js";
+import userModel from "../services/models/user.model.js";
 import { PRIVATE_KEY, createHash } from "../utils.js";
 
 const localStrategy = passportLocal.Strategy;

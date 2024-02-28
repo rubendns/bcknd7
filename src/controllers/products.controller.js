@@ -1,91 +1,78 @@
-import productDao from "../dao/mdbManagers/products.dao.js";
+import productsService from "../services/products.services.js";
 
-const productController = {
-	getAllProducts: async (req, res) => {
-		try {
-		const products = await productDao.getAllProducts(req);
-		return products;
-		} catch (error) {
-		console.error("Error al obtener todos los productos:", error);
-		res.status(500).json({ error: "Error al obtener productos" });
+async function getAllProducts(req, res) {
+	try {
+		const { limit = 10, page = 1, sort } = req.query;
+		const products = await productsService.getAllProducts(page, limit, sort);
+		res.json(products);
+	} catch (error) {
+		res.status(400).json(error);
+	}
+	}
+
+	async function getProductById(req, res) {
+	try {
+		const pid = req.params.pid;
+		const product = await productsService.getProductById(pid);
+		if (!product) {
+		return res.status(404).json({ message: "Product not found" });
 		}
-	},
+		res.json({
+		message: "success",
+		product,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+	}
 
-	createProduct: async (req, res) => {
-		try {
+	async function createProduct(req, res) {
+	try {
 		const product = req.body;
-		const createdProduct = await productDao.createProduct(product);
-		console.log("Producto creado con éxito:", createdProduct);
-		console.log("Datos del producto:", product);
-		res.status(201).json(createdProduct);
-		} catch (error) {
-		console.error("Error al crear el producto:", error.message);
-		res.status(500).json({ error: "Error al crear el producto" });
-		}
-	},
+		await productsService.createProduct(product);
+		res.redirect("/productManager");
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+	}
 
-	getProductById: async (req, res) => {
-		const { ID } = req.params;
-		try {
-		const product = await productDao.getProductById(ID);
-		res.json(product);
-		} catch (error) {
-		console.log("Error al buscar el producto por ID");
-		console.log(error);
+	async function updateProduct(req, res) {
+	try {
+		const pid = req.params.pid;
+		const product = req.body;
+		const updatedProduct = await productsService.updateProduct(pid, product);
+		if (!updatedProduct) {
+		return res.status(404).json({ message: "Product not found" });
 		}
-	},
+		res.json({
+		message: "success",
+		updatedProduct,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+	}
 
-	updateProduct: async (req, res) => {
-		const { ID } = req.params;
-		const data = req.body;
+	async function deleteProduct(req, res) {
+	try {
+		const pid = req.params.pid;
+		const deletedProduct = await productsService.deleteProduct(pid);
+		if (!deletedProduct) {
+		return res.status(404).json({ message: "Product not found" });
+		}
+		res.json({
+		message: "Product deleted",
+		deletedProduct,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+	}
 
-		try {
-		const product = await productDao.updateProduct(ID, data);
-		if (product) {
-			res.json({
-			message: "Producto actualizado con exito",
-			});
-		} else {
-			res.json({
-			message: "No se pudo actualizar el producto",
-			});
-		}
-		} catch (error) {
-		console.log(error);
-		}
-	},
-
-	deleteProduct: async (req, res) => {
-		const { ID } = req.params;
-		try {
-		const product = await productDao.deleteProduct(ID);
-		if (product) {
-			res.json({
-			message: "Producto eliminado con exito",
-			});
-		} else {
-			res.json({
-			message: "No se encontro en producto en la base de datos",
-			});
-		}
-		} catch (error) {
-		console.log("Error al eliminar el producto");
-		}
-	},
-
-	getProductDetailById: async (req, res) => {
-		const { ID } = req.params;
-
-		try {
-		const product = await productDao.getProductById(ID);
-		res.json(product);
-		} catch (error) {
-		console.log("Error al buscar el producto por ID");
-		console.log(error);
-		res.status(500).json({ error: "Error al buscar el producto por ID" });
-		}
-	},
+	export {
+	getAllProducts,
+	getProductById,
+	createProduct,
+	updateProduct,
+	deleteProduct,
 };
-
-export default productController;
-F;

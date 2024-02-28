@@ -3,9 +3,9 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { PRIVATE_KEY } from '../utils.js';
-import productsDao from "../dao/mdbManagers/products.dao.js";
-import cartsDao from "../dao/mdbManagers/carts.dao.js";
-import userModel from "../dao/models/user.model.js";
+import productsDao from "../services/dao/products.dao.js";
+import cartsDao from "../services/dao/carts.dao.js";
+import userModel from "../services/models/user.model.js";
 
 const viewsRouter = Router();
 

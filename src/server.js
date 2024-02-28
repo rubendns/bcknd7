@@ -1,23 +1,23 @@
 import express from "express";
-import { ProductRouter } from "./routes/products.routes.js";
-import { CartsRouter } from "./routes/carts.routes.js";
+import { ProductRouter } from "./routes/products.router.js";
+import { CartsRouter } from "./routes/carts.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
-import { viewsRouter } from "./routes/views.routes.js";
+import { viewsRouter } from "./routes/views.router.js";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import Handlebars from "handlebars";
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
-import messagesDao from "./dao/mdbManagers/messages.dao.js";
-// import sessionsRouter from "./routes/sessions.routes.js";
+//import messagesDao from "./services/dao/messages.dao.js";
+import sessionsRouter from "./routes/sessions.router.js";
 import jwtRouter from "./routes/jwt.router.js";
-import userViewRouter from "./routes/users.views.routes.js";
+import userViewRouter from "./routes/users.views.router.js";
 import cookieParser from 'cookie-parser';
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-import githubLoginViewRouter from "./routes/github-login.views.router.js";
+import githubLoginViewRouter from "./routes/github-login.router.js";
 import config from './config/config.js';
 import cors from 'cors';
 
@@ -77,9 +77,12 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Ruta main
 app.use("/", viewsRouter);
+
+// Routes
 app.use("/users", userViewRouter);
-// app.use("/api/sessions", sessionsRouter);
+app.use("/api/sessions", sessionsRouter);
 app.use("/api/jwt", jwtRouter);
 app.use("/github", githubLoginViewRouter);
 app.use("/api/products", ProductRouter);
@@ -103,15 +106,15 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-io.on("connection", (socket) => {
-  console.log("New client connected: " + socket.id);
+// io.on("connection", (socket) => {
+//   console.log("New client connected: " + socket.id);
 
-  socket.on("message", async (data) => {
-    console.log(data);
-    await messagesDao.createMessage(data);
-  });
+//   socket.on("message", async (data) => {
+//     console.log(data);
+//     await messagesDao.createMessage(data);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected: " + socket.id);
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("Client disconnected: " + socket.id);
+//   });
+// });
